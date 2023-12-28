@@ -15,17 +15,29 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path, include
 from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import SimpleRouter
 
-from recipe.views import TagViewSet
+from recipe.views import TagViewSet, MeasurementUnitViewSet, IngredientViewSet, \
+    RecipesViewSet, RecipesFavoriteViewSet
+
+from recipe import views
 
 router = SimpleRouter()
 router.register(r'api/tags', TagViewSet, basename='tags')
+router.register(r'api/ingredients', IngredientViewSet, basename='tags')
+router.register(r'api/recipes', RecipesViewSet, basename='recipes')
+
+router.register(r'api/measurementUnit', MeasurementUnitViewSet,
+                basename='measurementUnit')
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('djoser.urls'), name='auth'),
+    path('api/recipes/<int:id>/favorite/',
+         RecipesFavoriteViewSet.as_view()),
+    re_path(r'api/auth/', include('djoser.urls.authtoken')),
 ]
 urlpatterns += router.urls
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

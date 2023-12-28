@@ -15,18 +15,18 @@ class MeasurementUnitAdminPanel(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdminPanel(admin.ModelAdmin):
-    fields = ['name', 'amount', 'measurement_unit', ]
+    fields = ['name', 'measurement_unit', ]
 
 
 @admin.register(Recipe)
 class RecipeAdminPanel(admin.ModelAdmin):
-    fields = ['author', 'title', 'img', 'description', 'tags',
+    fields = ['author', 'name', 'image', 'text', 'tags',
               'cooking_time']
 
 
 @admin.register(Tag)
 class TagAdminPanel(admin.ModelAdmin):
-    fields = ['title', 'color_code', 'slug', 'id']
+    fields = ['name', 'color', 'slug']
 
 
 @admin.register(RecipeIngredientRelation)
@@ -36,9 +36,9 @@ class RecipeIngredientRelationAdminPanel(admin.ModelAdmin):
 
 @admin.register(ShoppingList)
 class ShoppingListAdminPanel(admin.ModelAdmin):
-    fields = ['user', 'recipes']
+    fields = ['user', 'recipe']
 
 
 @admin.register(UserFavoriteRecipe)
 class FavoriteRecipeAdminPanel(admin.ModelAdmin):
-    fields = ['user', 'recipes']
+    fields = ['user', 'recipe']

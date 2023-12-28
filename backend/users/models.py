@@ -1,5 +1,17 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Exists, OuterRef
+
+
+class UserQuerySet(models.QuerySet):
+    def with_is_subscribe(self, user):
+        return self.annotate(
+            is_subscribed=(
+                Exists(UserSubscribe.objects.filter(user=user,
+                                                    author=OuterRef(
+                                                        "pk")))
+            )
+        )
 
 
 class User(AbstractUser):
