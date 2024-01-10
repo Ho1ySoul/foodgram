@@ -49,18 +49,14 @@ class RecipesViewSet(ModelViewSet):
             )
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
-        # RecipeIngredientRelation.objects.create(recipe=a,
-        #                                         ingredient=serializer.data[
-        #                                             'ingredients'])
-
-
-# class RecipesViewSet(APIView):
-#
-#     def get(self, request):
-#         recipes = Recipe.objects.all().with_is_favorited(self.request.user).with_is_in_shopping_cart(self.request.user)
-#         serializer = RecipeSerializer(recipes, many=True)
-#         return Response(serializer.data)
+        print('Tyt', self.request.data)
+        a = serializer.save(author=self.request.user)
+        print('TYT', self.request.POST)
+        # for ingredient in self.request.data['ingredients']:
+        #     RecipeIngredientRelation.objects.create(
+        #         recipe=Recipe.objects.get(pk=a.id),
+        #         ingredient=Ingredient.objects.get(pk=ingredient['id']),
+        #         amount=ingredient['amount'])
 
 
 class RecipesFavoriteViewSet(APIView):
