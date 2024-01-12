@@ -20,23 +20,33 @@ from django.conf.urls.static import static
 from django.conf import settings
 from rest_framework.routers import SimpleRouter
 
-from recipe.views import TagViewSet, MeasurementUnitViewSet, IngredientViewSet, \
-    RecipesViewSet, RecipesFavoriteViewSet
+from recipe.views import (TagViewSet, MeasurementUnitViewSet,
+                          IngredientViewSet,
+                          RecipesViewSet, RecipesFavoriteViewSet,
+                          RecipesShoppingCartViewSet,
+                          RecipesShoppingCartDownloadViewSet)
 
 from recipe import views
+from users.views import UserFavoriteViewSet
 
 router = SimpleRouter()
 router.register(r'api/tags', TagViewSet, basename='tags')
 router.register(r'api/ingredients', IngredientViewSet, basename='tags')
 router.register(r'api/recipes', RecipesViewSet, basename='recipes')
-
 router.register(r'api/measurementUnit', MeasurementUnitViewSet,
                 basename='measurementUnit')
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('djoser.urls'), name='auth'),
     path('api/recipes/<int:id>/favorite/',
          RecipesFavoriteViewSet.as_view()),
+    path('api/recipes/<int:id>/shopping_cart/',
+         RecipesShoppingCartViewSet.as_view()),
+    path('api/users/<int:id>/subscribe/',
+         UserFavoriteViewSet.as_view()),
+    path('api/recipes/download_shopping_cart/',
+         RecipesShoppingCartDownloadViewSet.as_view()),
     re_path(r'api/auth/', include('djoser.urls.authtoken')),
 ]
 urlpatterns += router.urls

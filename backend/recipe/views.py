@@ -1,3 +1,5 @@
+from django.db.models import Sum
+from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -8,7 +10,7 @@ from recipe.seriazliers import TagSerializer, MeasurementUnitSerializer, \
     IngredientSerializer, RecipeSerializer, RecipeFavoriteSerializer, \
     RecipeSerializerForPost
 from recipe.models import Tag, MeasurementUnit, Ingredient, Recipe, \
-    UserFavoriteRecipe, RecipeIngredientRelation
+    UserFavoriteRecipe, RecipeIngredientRelation, ShoppingList
 
 
 class TagViewSet(ModelViewSet):
@@ -45,13 +47,10 @@ class RecipesViewSet(ModelViewSet):
             return (
                 self.queryset
                 .with_is_favorited(self.request.user)
-                .with_is_in_shopping_cart(self.request.user)
-            )
+                .with_is_in_shopping_cart(self.request.user))
 
     def perform_create(self, serializer):
-        print('Tyt', self.request.data)
-        a = serializer.save(author=self.request.user)
-        print('TYT', self.request.POST)
+        serializer.save(author=self.request.user)
         # for ingredient in self.request.data['ingredients']:
         #     RecipeIngredientRelation.objects.create(
         #         recipe=Recipe.objects.get(pk=a.id),
@@ -82,3 +81,43 @@ class RecipesFavoriteViewSet(APIView):
         UserFavoriteRecipe.objects.filter(user=request.user,
                                           recipe=recipe).delete()
         return Response({"message": "Рецепт успешно удалён"})
+
+
+class RecipesShoppingCartViewSet(APIView):
+    def post(self, request, id):
+        recipe = Recipe.objects.filter(id=id).first()
+        HaveShoppingList = ShoppingList.objects.filter(user=request.user,
+                                                       recipe=recipe)
+        if (HaveShoppingList):
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = RecipeFavoriteSerializer(recipe)
+        ShoppingList.objects.create(user=request.user, recipe=recipe)
+
+        return Response(serializer.data)
+
+    def delete(self, request, id):
+        recipe = Recipe.objects.get(id=id)
+        ShoppingList.objects.filter(user=request.user,
+                                    recipe=recipe).delete()
+        return Response({"message": "Рецепт успешно удалён"})
+
+
+class RecipesShoppingCartDownloadViewSet(APIView):
+
+    def get(self, request):
+        shop_recipes = ShoppingList.objects.filter(
+            user=self.request.user).values('recipe')
+        ingredients = (RecipeIngredientRelation
+                       .objects
+                       .filter(recipe__in=shop_recipes)
+                       .values('ingredient__name', 'amount')
+                       .annotate(Sum('amount')))
+
+        ingredients_line = ''
+        for ingredient in ingredients:
+            ingredients_line += f'{ingredient['ingredient__name']} : {ingredient['amount']}  \n'
+        return HttpResponse(
+            ingredients_line,
+            headers={'Content-Type': 'text/plain'}
+        )

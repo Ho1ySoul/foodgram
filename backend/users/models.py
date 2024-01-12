@@ -1,4 +1,5 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 from django.db.models import Exists, OuterRef
 
@@ -15,11 +16,12 @@ class UserQuerySet(models.QuerySet):
 
 
 class User(AbstractUser):
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'email']
-
+    REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
+    USERNAME_FIELD = 'email'
     first_name = models.CharField(max_length=150)
     last_name = models.CharField(max_length=150)
-    email = models.EmailField()
+    email = models.EmailField(unique=True)
+    username = models.CharField(max_length=50, unique=True, blank=True)
 
 
 class UserSubscribe(models.Model):

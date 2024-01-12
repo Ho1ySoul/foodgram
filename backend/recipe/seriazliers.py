@@ -1,12 +1,9 @@
 import base64
 
 from django.core.files.base import ContentFile
-from requests.compat import basestring
-from rest_framework.fields import ReadOnlyField
-from rest_framework.renderers import JSONRenderer
 from rest_framework.serializers import ModelSerializer
-from recipe.models import Tag, MeasurementUnit, Ingredient, Recipe, \
-    RecipeIngredientRelation
+from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
+                           RecipeIngredientRelation)
 from rest_framework import serializers
 
 from users.serializers import UserSerializer
@@ -80,17 +77,28 @@ class RecipeSerializerForPost(ModelSerializer):
                                                      source='ingredient_set')
 
     def create(self, validate_data):
-        print("VALID", validate_data)
         tags = validate_data.pop('tags', None)
         ingredients = validate_data.pop('ingredient_set', None)
         recipe = Recipe.objects.create(**validate_data)
         recipe.tags.set(tags)
-        print('INGR', ingredients)
-        # recipe.ingredients.set(ingredients)
         RecipeIngredientRelation.objects.bulk_create(
             [RecipeIngredientRelation(recipe=recipe, **p) for p in ingredients]
         )
         return recipe
+
+    def update(self, instance, validated_data):
+        tags = validated_data.pop('tags', None)
+        ingredients = validated_data.pop('ingredient_set', None)
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+        instance.tags.clear()
+        instance.ingredient_set.clear()
+        instance.tags.set(tags)
+        RecipeIngredientRelation.objects.bulk_create(
+            [RecipeIngredientRelation(recipe=instance, **p) for p in ingredients]
+        )
+        return instance
 
     # ingredients = serializers.SerializerMethodField(
     #     method_name="get_ingredients"
@@ -156,3 +164,7 @@ class RecipeFavoriteSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'cooking_time', 'name', 'image']
+
+# class RecipesShoppingCartSerializer(ModelSerializer):
+#     class Meta:
+#         model =

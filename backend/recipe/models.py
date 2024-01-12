@@ -8,7 +8,8 @@ User = get_user_model()
 class RecipeQuerySet(models.QuerySet):
     def with_is_favorited(self, user):
         return self.annotate(
-            is_favorited=(
+            is_favorited =
+            (
                 Exists(UserFavoriteRecipe.objects.filter(user=user,
                                                          recipe=OuterRef(
                                                              "pk")))
@@ -17,7 +18,8 @@ class RecipeQuerySet(models.QuerySet):
 
     def with_is_in_shopping_cart(self, user):
         return self.annotate(
-            is_in_shopping_cart=(
+            is_in_shopping_cart =
+            (
                 Exists(ShoppingList.objects.filter(user=user,
                                                    recipe=OuterRef(
                                                        "pk")))

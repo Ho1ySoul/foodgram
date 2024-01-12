@@ -16,4 +16,20 @@ class UserSerializer(ModelSerializer):
             'first_name',
             'last_name',
             "is_subscribed"
+
+        )
+
+
+class UserFavoriteSerializer(ModelSerializer):
+    is_subscribed = serializers.BooleanField(default=False)
+
+    class Meta:
+        model = User
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            "is_subscribed"
         )
