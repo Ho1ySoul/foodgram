@@ -96,8 +96,10 @@ class RecipeSerializerForPost(ModelSerializer):
         instance.ingredient_set.clear()
         instance.tags.set(tags)
         RecipeIngredientRelation.objects.bulk_create(
-            [RecipeIngredientRelation(recipe=instance, **p) for p in ingredients]
+            [RecipeIngredientRelation(recipe=instance, **p) for p in
+             ingredients]
         )
+
         return instance
 
     # ingredients = serializers.SerializerMethodField(

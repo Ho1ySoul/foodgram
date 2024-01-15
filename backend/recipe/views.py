@@ -1,11 +1,14 @@
 from django.db.models import Sum
 from django.http import HttpResponse
+
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ViewSet
+from django.db.models import F
 
+from foodgram.filters import CategoriesFilter
 from recipe.seriazliers import TagSerializer, MeasurementUnitSerializer, \
     IngredientSerializer, RecipeSerializer, RecipeFavoriteSerializer, \
     RecipeSerializerForPost
@@ -35,6 +38,7 @@ class IngredientViewSet(ModelViewSet):
 
 class RecipesViewSet(ModelViewSet):
     queryset = Recipe.objects.all()
+    filterset_class = CategoriesFilter
 
     def get_serializer_class(self):
         if self.request.method == 'POST' or self.request.method == 'PATCH':
@@ -56,6 +60,12 @@ class RecipesViewSet(ModelViewSet):
         #         recipe=Recipe.objects.get(pk=a.id),
         #         ingredient=Ingredient.objects.get(pk=ingredient['id']),
         #         amount=ingredient['amount'])
+
+    # def update(self, request, pk, partial):
+    #     # a = RecipeIngredientRelation.objects.get(request.data['ingredients'][0]['id'])
+    #     # print
+    #     # print(request.data.through.ingredients)
+    #     print(request.data)
 
 
 class RecipesFavoriteViewSet(APIView):
@@ -108,15 +118,28 @@ class RecipesShoppingCartDownloadViewSet(APIView):
     def get(self, request):
         shop_recipes = ShoppingList.objects.filter(
             user=self.request.user).values('recipe')
-        ingredients = (RecipeIngredientRelation
-                       .objects
-                       .filter(recipe__in=shop_recipes)
-                       .values('ingredient__name', 'amount')
-                       .annotate(Sum('amount')))
+        ingredients = (
+            RecipeIngredientRelation
+            .objects
+            .filter(recipe__in=shop_recipes)
+            .values('ingredient')
+            .annotate(
+                amount_ingredient=Sum('amount'),
+                ingredient_name=F('ingredient__name'),
+                ingredient_measurement_unit=F(
+                    'ingredient__measurement_unit__title'),
 
+            )
+        )
+
+        print(ingredients)
         ingredients_line = ''
         for ingredient in ingredients:
-            ingredients_line += f'{ingredient['ingredient__name']} : {ingredient['amount']}  \n'
+            ingredients_line += (f'{ingredient['ingredient_name']} :'
+                                 f'  {ingredient['amount_ingredient']} '
+                                 f'{ingredient['ingredient_measurement_unit']}\n')
+
+            # f'({ingredient['ingredient__measurement_unit__title']}) \n')
         return HttpResponse(
             ingredients_line,
             headers={'Content-Type': 'text/plain'}

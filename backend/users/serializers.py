@@ -6,7 +6,6 @@ from rest_framework import serializers
 
 class UserSerializer(ModelSerializer):
     is_subscribed = serializers.BooleanField(default=False)
-
     class Meta:
         model = User
         fields = (

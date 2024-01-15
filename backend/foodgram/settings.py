@@ -164,13 +164,22 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PARSER_CLASSES': (
     #     'rest_framework.parsers.JSONParser',
     # ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ]
 }
 DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
+    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
+    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
-        'current_user': 'users.serializers.UserSerializer', },
-    'LOGIN_FIELD': 'email'
+        'current_user': 'users.serializers.UserSerializer',
+        'user': 'users.serializers.UserSerializer'},
+    'LOGIN_FIELD': 'email',
+    'PERMISSIONS': {
+        'user': ['rest_framework.permissions.AllowAny'],
+        'user_list': ['rest_framework.permissions.AllowAny'],
+    },
+    # 'HIDE_USERS': False
 }
 DEFAULT_CHARSET = 'utf-8'
