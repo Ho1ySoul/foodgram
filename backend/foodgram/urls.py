@@ -38,6 +38,8 @@ router.register(r'api/measurementUnit', MeasurementUnitViewSet,
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/users/subscriptions/',
+         UserProfileView.as_view()),
     path('api/', include('djoser.urls'), name='auth'),
     path('api/recipes/<int:id>/favorite/',
          RecipesFavoriteViewSet.as_view()),

@@ -87,6 +87,8 @@ class RecipeSerializerForPost(ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
+        print(instance.ingredient_set)
+        print(validated_data)
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredient_set', None)
         for attr, value in validated_data.items():
@@ -143,7 +145,7 @@ class RecipeSerializer(RecipeSerializerForPost):
             recipe__name=obj.name)
         for ingredient_to_recipe in all_ingredients:
             my_dict = dict()
-            my_dict['id'] = ingredient_to_recipe.id
+            my_dict['id'] = ingredient_to_recipe.ingredient.id
             my_dict['amount'] = ingredient_to_recipe.amount
             my_dict['measurement_unit'] = (ingredient_to_recipe
                                            .ingredient
