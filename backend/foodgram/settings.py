@@ -22,7 +22,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 env = environ.Env()
 environ.Env.read_env(env_file=os.path.join(BASE_DIR, '.env'))
-# SECURITY WARNING: keep the secret key used in production secret!
 
 SECRET_KEY = env(
     'SECRET_KEY')
@@ -169,8 +168,7 @@ REST_FRAMEWORK = {
     # ]
 }
 DJOSER = {
-    # 'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    # 'ACTIVATION_URL': '#/activate/{uid}/{token}',
+
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'current_user': 'users.serializers.UserSerializer',

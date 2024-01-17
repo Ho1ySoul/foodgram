@@ -56,7 +56,7 @@ class Tag(models.Model):
 class Recipe(models.Model):
     author = models.ForeignKey(User,
                                on_delete=models.CASCADE,
-                               related_name='recipe')
+                               related_name='recipes1')
 
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='Recipe',

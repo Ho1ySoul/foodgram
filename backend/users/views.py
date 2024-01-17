@@ -1,13 +1,19 @@
+import http.client
+
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.generics import GenericAPIView
-from rest_framework.permissions import IsAuthenticated, \
-    IsAuthenticatedOrReadOnly
+from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from users.models import UserSubscribe, User
-from users.serializers import UserSerializer, UserFavoriteSerializer
+from users.serializers import UserSerializer, UserFavoriteSerializer, \
+    UserSerializerForSubcribe
+
+
+class SmallPagesPagination(PageNumberPagination):
+    page_size = 4
 
 
 class UserFavoriteViewSet(APIView):
@@ -28,7 +34,8 @@ class UserFavoriteViewSet(APIView):
             UserSubscribe.objects.get(pk=UserAuthor.pk).delete()
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = UserFavoriteSerializer(UserAuthor.author)
+        serializer = UserSerializer(UserAuthor.author)
+        print('mydata', serializer.data)
         serializer.data['is_subscribed'] = True
         return Response(serializer.data)
 
@@ -44,7 +51,8 @@ class UserFavoriteViewSet(APIView):
     #     return Response(serializer.data)
 
 
-class UserProfileView(GenericAPIView):
+class UserProfileView(ListAPIView):
+    pagination_class = SmallPagesPagination
 
     def get_queryset(self):
         return User.objects.all()
@@ -53,8 +61,12 @@ class UserProfileView(GenericAPIView):
     #     queryset = self.get_queryset()
     #     user = queryset.filter(pk=id)
     #     return user
-    def get(self, request):
-        user_subscribe = UserSubscribe.objects.filter(user=request.user, )
+    def get(self, request, *args, **kwargs):
+        user_subscribe = UserSubscribe.objects.filter(user=request.user)
+
         authors = user_subscribe.values('author')
-        serializer = UserSerializer(authors)
-        return Response(serializer.data)
+        users = [User.objects.get(pk=user['author']) for user in authors]
+        serializer = UserFavoriteSerializer(users, many=True)
+        page = self.paginate_queryset(serializer.data)
+        return self.get_paginated_response(page)
+        # return serializer.data

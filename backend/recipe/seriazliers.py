@@ -54,10 +54,6 @@ class Base64ImageField(serializers.ImageField):
 
 
 class RecipeIngredientRelationSerializer(ModelSerializer):
-    # id = serializers.PrimaryKeyRelatedField(
-    #     queryset=Ingredient.objects.all())
-
-    # recipe = serializers.RelatedField(queryset=Recipe.objects.all())
     id = serializers.PrimaryKeyRelatedField(
         queryset=Ingredient.objects.all(),
         read_only=False,
@@ -87,8 +83,6 @@ class RecipeSerializerForPost(ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-        print(instance.ingredient_set)
-        print(validated_data)
         tags = validated_data.pop('tags', None)
         ingredients = validated_data.pop('ingredient_set', None)
         for attr, value in validated_data.items():
@@ -103,27 +97,6 @@ class RecipeSerializerForPost(ModelSerializer):
         )
 
         return instance
-
-    # ingredients = serializers.SerializerMethodField(
-    #     method_name="get_ingredients"
-    # )
-    #
-    # def get_ingredients(self, obj):
-    #     my_list = list()
-    #     all_ingredients = obj.ingredients.through.objects.filter(
-    #         recipe__name=obj.name)
-    #     for ingredient_to_recipe in all_ingredients:
-    #         my_dict = dict()
-    #         my_dict['id'] = ingredient_to_recipe.id
-    #         my_dict['amount'] = ingredient_to_recipe.amount
-    #         my_dict['measurement_unit'] = (ingredient_to_recipe
-    #                                        .ingredient
-    #                                        .measurement_unit
-    #                                        .title)
-    #         my_dict['name'] = ingredient_to_recipe.ingredient.name
-    #
-    #         my_list.append(my_dict)
-    #     return my_list
 
     class Meta:
         model = Recipe
@@ -168,7 +141,3 @@ class RecipeFavoriteSerializer(ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'cooking_time', 'name', 'image']
-
-# class RecipesShoppingCartSerializer(ModelSerializer):
-#     class Meta:
-#         model =

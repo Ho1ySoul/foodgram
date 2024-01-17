@@ -5,15 +5,17 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, ViewSet
+from rest_framework.viewsets import ModelViewSet
 from django.db.models import F
 
 from foodgram.filters import CategoriesFilter
-from recipe.seriazliers import TagSerializer, MeasurementUnitSerializer, \
-    IngredientSerializer, RecipeSerializer, RecipeFavoriteSerializer, \
-    RecipeSerializerForPost
-from recipe.models import Tag, MeasurementUnit, Ingredient, Recipe, \
-    UserFavoriteRecipe, RecipeIngredientRelation, ShoppingList
+from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
+                                IngredientSerializer, RecipeSerializer,
+                                RecipeFavoriteSerializer,
+                                RecipeSerializerForPost)
+from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
+                           UserFavoriteRecipe, RecipeIngredientRelation,
+                           ShoppingList)
 
 
 class TagViewSet(ModelViewSet):
@@ -50,22 +52,13 @@ class RecipesViewSet(ModelViewSet):
         if self.request.user.is_authenticated:
             return (
                 self.queryset
+                .prefetch_related('tags','ingredients')
+                .select_related('author')
                 .with_is_favorited(self.request.user)
                 .with_is_in_shopping_cart(self.request.user))
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
-        # for ingredient in self.request.data['ingredients']:
-        #     RecipeIngredientRelation.objects.create(
-        #         recipe=Recipe.objects.get(pk=a.id),
-        #         ingredient=Ingredient.objects.get(pk=ingredient['id']),
-        #         amount=ingredient['amount'])
-
-    # def update(self, request, pk, partial):
-    #     # a = RecipeIngredientRelation.objects.get(request.data['ingredients'][0]['id'])
-    #     # print
-    #     # print(request.data.through.ingredients)
-    #     print(request.data)
 
 
 class RecipesFavoriteViewSet(APIView):
@@ -139,7 +132,6 @@ class RecipesShoppingCartDownloadViewSet(APIView):
                                  f'  {ingredient['amount_ingredient']} '
                                  f'{ingredient['ingredient_measurement_unit']}\n')
 
-            # f'({ingredient['ingredient__measurement_unit__title']}) \n')
         return HttpResponse(
             ingredients_line,
             headers={'Content-Type': 'text/plain'}

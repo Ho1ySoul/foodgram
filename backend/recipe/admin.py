@@ -4,10 +4,6 @@ from .models import Recipe, Ingredient, MeasurementUnit, \
     RecipeIngredientRelation, ShoppingList, UserFavoriteRecipe, Tag
 
 
-# from  import Recipe, Ingredient, MeasurementUnit, \
-#     RecipeIngredientRelation, ShoppingList, UserFavoriteRecipe, Tag
-
-
 @admin.register(MeasurementUnit)
 class MeasurementUnitAdminPanel(admin.ModelAdmin):
     fields = ['title', ]

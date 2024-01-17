@@ -3,7 +3,7 @@ from django.db import models
 from django.db.models import Exists, OuterRef, Count
 
 
-# from recipe.models import Recipe
+
 
 
 class UserQuerySet(models.QuerySet):
