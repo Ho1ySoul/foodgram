@@ -27,7 +27,8 @@ from recipe.views import (TagViewSet, MeasurementUnitViewSet,
                           RecipesShoppingCartDownloadViewSet)
 
 from recipe import views
-from users.views import UserFavoriteViewSet, UserProfileView
+from users.views import UserFavoriteViewSet, UserProfileView, \
+    UserProfileIsSubcribedView
 
 router = SimpleRouter()
 router.register(r'api/tags', TagViewSet, basename='tags')
@@ -35,8 +36,12 @@ router.register(r'api/ingredients', IngredientViewSet, basename='tags')
 router.register(r'api/recipes', RecipesViewSet, basename='recipes')
 router.register(r'api/measurementUnit', MeasurementUnitViewSet,
                 basename='measurementUnit')
+router.register(r'api/users/<int:id>', UserProfileIsSubcribedView,
+                basename='UserProfileIsSubcribedView')
 
-urlpatterns = [
+urlpatterns = []
+urlpatterns += router.urls
+urlpatterns += [
     path('admin/', admin.site.urls),
     path('api/users/subscriptions/',
          UserProfileView.as_view()),
@@ -51,7 +56,8 @@ urlpatterns = [
          RecipesShoppingCartDownloadViewSet.as_view()),
     re_path(r'api/auth/', include('djoser.urls.authtoken')),
     # path('api/users/<int:id>/',
-    #      UserProfileView.as_view()),
+    #      UserProfileView1.as_view()),
 ]
-urlpatterns += router.urls
+
+
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -55,25 +55,26 @@ class UserSerializerForSubcribe(ModelSerializer):
 
 
 class UserSerializer(ModelSerializer):
-    is_subscribed = serializers.BooleanField(read_only=True, default=True)
+    is_subscribed = serializers.BooleanField(required=False)
     email = serializers.EmailField(read_only=True)
     first_name = serializers.CharField(read_only=True)
     last_name = serializers.CharField(read_only=True)
     username = serializers.CharField(read_only=True)
     recipes_count = serializers.SerializerMethodField(
         method_name="get_recipe_count")
+    recipes = RecipeForSerializer(source='recipes1', many=True)
 
-    recipes = serializers.SerializerMethodField(
-        method_name="get_recipe")
+    # recipes = serializers.SerializerMethodField(
+    #     method_name="get_recipe")
 
     def get_recipe_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
 
-    def get_recipe(self, obj):
-        return Recipe.objects.filter(author=obj).values('name',
-                                                        'id',
-                                                        'cooking_time',
-                                                        'image')
+    # def get_recipe(self, obj):
+    #     return Recipe.objects.filter(author=obj).values('name',
+    #                                                     'id',
+    #                                                     'cooking_time',
+    #                                                     'image')
 
     class Meta:
         model = User
@@ -83,14 +84,14 @@ class UserSerializer(ModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed',
             'recipes_count',
-            'recipes'
+            'recipes',
+            'is_subscribed',
         )
 
 
 class UserFavoriteSerializer(ModelSerializer):
-    is_subscribed = serializers.BooleanField(read_only=True, default=True)
+    is_subscribed = serializers.BooleanField(required=False)
     # email = serializers.EmailField(read_only=True)
     # first_name = serializers.CharField(read_only=True)
     # last_name = serializers.CharField(read_only=True)
@@ -125,7 +126,7 @@ class UserFavoriteSerializer(ModelSerializer):
             'username',
             'first_name',
             'last_name',
-            'is_subscribed',
             'recipes_count',
-            'recipes'
+            'recipes',
+            'is_subscribed',
         )

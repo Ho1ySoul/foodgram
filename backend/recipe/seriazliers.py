@@ -102,7 +102,7 @@ class RecipeSerializerForPost(ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'name', 'image', 'text',
-                  'cooking_time']
+                  'cooking_time',]
 
 
 class RecipeSerializer(RecipeSerializerForPost):
