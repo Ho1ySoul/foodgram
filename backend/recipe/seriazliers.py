@@ -6,7 +6,7 @@ from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
                            RecipeIngredientRelation)
 from rest_framework import serializers
 
-from users.serializers import UserSerializer
+from users.serializers import UserSerializer, UserSerializerForSubcribe
 
 
 class TagSerializer(ModelSerializer):
@@ -108,7 +108,7 @@ class RecipeSerializer(RecipeSerializerForPost):
     tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField(
         method_name="get_ingredients")
-
+    author = UserSerializerForSubcribe(read_only=True)
     def get_ingredients(self, obj):
         my_list = list()
         return obj.ingredients.through.objects.filter(
