@@ -36,15 +36,20 @@ router.register(r'api/ingredients', IngredientViewSet, basename='tags')
 router.register(r'api/recipes', RecipesViewSet, basename='recipes')
 router.register(r'api/measurementUnit', MeasurementUnitViewSet,
                 basename='measurementUnit')
-router.register(r'api/users/<int:id>', UserProfileIsSubcribedView,
+router.register(r'api/users', UserProfileIsSubcribedView,
                 basename='UserProfileIsSubcribedView')
 
 urlpatterns = []
-urlpatterns += router.urls
 urlpatterns += [
-    path('admin/', admin.site.urls),
     path('api/users/subscriptions/',
          UserProfileView.as_view()),
+    path('api/recipes/download_shopping_cart/',
+         RecipesShoppingCartDownloadViewSet.as_view()),
+]
+urlpatterns += router.urls
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += [
+    path('admin/', admin.site.urls),
     path('api/', include('djoser.urls'), name='auth'),
     path('api/recipes/<int:id>/favorite/',
          RecipesFavoriteViewSet.as_view()),
@@ -52,12 +57,8 @@ urlpatterns += [
          RecipesShoppingCartViewSet.as_view()),
     path('api/users/<int:id>/subscribe/',
          UserFavoriteViewSet.as_view()),
-    path('api/recipes/download_shopping_cart/',
-         RecipesShoppingCartDownloadViewSet.as_view()),
+
     re_path(r'api/auth/', include('djoser.urls.authtoken')),
-    # path('api/users/<int:id>/',
-    #      UserProfileView1.as_view()),
+    # path(r'api/users/<int:id>/',
+    #      UserProfileView.as_view()),
 ]
-
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

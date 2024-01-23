@@ -52,10 +52,11 @@ class RecipesViewSet(ModelViewSet):
         if self.request.user.is_authenticated:
             return (
                 self.queryset
-                .prefetch_related('tags','ingredients')
+                .prefetch_related('tags', 'ingredients')
                 .select_related('author')
                 .with_is_favorited(self.request.user)
-                .with_is_in_shopping_cart(self.request.user))
+                .with_is_in_shopping_cart(self.request.user)
+            )
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)

@@ -5,7 +5,11 @@ from .models import User, UserSubscribe
 
 @admin.register(User)
 class UserAdminPanel(admin.ModelAdmin):
-    fields = ['first_name', 'last_name', 'email', 'username', 'is_staff',
+    fields = ['first_name',
+              'last_name',
+              'email',
+              'username',
+              'is_staff',
               'is_active']
 
 

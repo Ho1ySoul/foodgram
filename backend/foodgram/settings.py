@@ -65,6 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'drf_api_logger.middleware.api_logger_middleware.APILoggerMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
     'http://localhost',
@@ -172,7 +173,7 @@ DJOSER = {
     'SEND_ACTIVATION_EMAIL': False,
     'SERIALIZERS': {
         'current_user': 'users.serializers.UserSerializer',
-        'user': 'users.serializers.UserSerializer'},
+        'user': 'users.serializers.UserSerializerForSubcribe'},
     'LOGIN_FIELD': 'email',
     'PERMISSIONS': {
         'user': ['rest_framework.permissions.AllowAny'],
@@ -181,3 +182,39 @@ DJOSER = {
     # 'HIDE_USERS': False
 }
 DEFAULT_CHARSET = 'utf-8'
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    # 'filters': {
+    #     'require_debug_true': {
+    #         '()': 'django.utils.log.RequireDebugTrue',
+    #     },
+
+    "formatters": {
+        "main_format": {
+            "format": "{asctime} {levelname} {module} {filename} {message} ",
+            "style": "{",
+        },
+    },
+
+    'handlers': {
+        "console": {
+            # "level": "INFO",
+            "class": "logging.StreamHandler",
+            "formatter": "main_format",
+            # 'filters': ['require_debug_true'],
+        },
+    },
+
+    "loggers": {
+        "main": {
+            "handlers": ["console"],
+            "level": "DEBUG",
+            "propagate": True,
+        },
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+        },
+    }
+}

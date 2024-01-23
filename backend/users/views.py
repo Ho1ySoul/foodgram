@@ -2,25 +2,22 @@ import http.client
 
 from django.shortcuts import get_object_or_404
 from rest_framework import status
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
 
 from users.models import UserSubscribe, User
 from users.serializers import UserSerializer, UserFavoriteSerializer, \
     UserSerializerForSubcribe
 from djoser.views import UserViewSet
 
+
 class SmallPagesPagination(PageNumberPagination):
     page_size = 4
 
 
 class UserFavoriteViewSet(APIView):
-    # permission_classes = [IsAuthenticatedOrReadOnly]
-    # queryset = User.objects.all()
-
     def get_queryset(self):
         return User.objects.with_is_subscribe(self.request.user)
 
@@ -40,7 +37,6 @@ class UserFavoriteViewSet(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = UserSerializer(UserAuthor.author)
-        print('mydata', serializer.data)
         return Response(serializer.data)
 
     def delete(self, request, id):
@@ -49,44 +45,21 @@ class UserFavoriteViewSet(APIView):
                                   author=author).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # def get(self, request):
-    #     serializer = UserFavoriteSerializer(
-    #         UserSubscribe.objects.filter(user=request.user).values('author'))
-    #     return Response(serializer.data)
-
 
 class UserProfileView(ListAPIView):
-    # pagination_class = SmallPagesPagination
     serializer_class = UserFavoriteSerializer
 
     def get_queryset(self):
-        return (User.objects.with_is_subscribe(self.request.user)
+        return (User.objects
+                .with_is_subscribe(self.request.user)
+                # .with_is_recipe_count(self.request.user)
                 .filter(is_subscribed=True))
-
-    # def get(self, request):
-    #     serializer = UserFavoriteSerializer(self.get_queryset(), many=True)
-    #     page = self.paginate_queryset(serializer.data)
-    #     return self.get_paginated_response(page)
-    # def get_object(self, id):
-    #     queryset = self.get_queryset()
-    #     user = queryset.filter(pk=id)
-    #     return user
-    # def get(self, request, *args, **kwargs):
-    #     user_subscribe = UserSubscribe.objects.filter(user=request.user)
-    #
-    #     # authors = user_subscribe.values('author')
-    #     users = User.objects.filter(is_subscribed=True)
-    #     # users = [User.objects.get(pk=user['author']) for user in authors]
-    #     serializer = UserFavoriteSerializer(users, many=True)
-    #     page = self.paginate_queryset(serializer.data)
-    #     return self.get_paginated_response(page)
-    # return serializer.data
 
 
 class UserProfileIsSubcribedView(UserViewSet):
-    serializer_class = UserSerializer
+    serializer_class = UserSerializerForSubcribe
 
     def get_queryset(self):
-        return User.objects.with_is_subscribe(self.request.user).first()
-
-
+        return (User.objects
+                .with_is_subscribe(self.request.user))
+        # .with_is_recipe_count(self.request.user))

@@ -6,21 +6,17 @@ from django.db.models import Exists, OuterRef, Count
 class UserCustomManager(UserManager):
     def with_is_subscribe(self, user):
         user_subsribed = UserSubscribe.objects.filter(user=user,
-                                                      author=OuterRef(
-                                                          'pk'))
+                                                      author=OuterRef('pk'))
 
         return self.annotate(is_subscribed=(Exists(user_subsribed)))
 
+    # def with_is_recipe_count(self, user):
+    #     recipes = Recipe.objects.filter(author=user)
+    #     return self.annotate(recipes_count=Count(recipes))
     # def with_count_recipes(self, user):
     #     user_subsribed = UserSubscribe.objects.filter(user=user,
     #                                                   author=OuterRef(
     #                                                       'pk'))
-    #
-    #     return self.annotate(recipes_count=Count(user_subsribed.author.recipes1))
-    # def with_recipe_count(self, user):
-    #     return self.annotate(
-    #         recipes_count=Count(Recipe.objects.filter(author=user)))
-    #
 
 
 class User(AbstractUser):

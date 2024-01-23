@@ -28,9 +28,6 @@ class MeasurementUnitSerializer(ModelSerializer):
 
 
 class IngredientSerializer(ModelSerializer):
-    measurement_unit = serializers.SlugRelatedField(slug_field="title",
-                                                    read_only=True)
-
     class Meta:
         model = Ingredient
         fields = ['id', 'name', 'measurement_unit']
@@ -102,7 +99,7 @@ class RecipeSerializerForPost(ModelSerializer):
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'name', 'image', 'text',
-                  'cooking_time',]
+                  'cooking_time', ]
 
 
 class RecipeSerializer(RecipeSerializerForPost):
@@ -114,27 +111,33 @@ class RecipeSerializer(RecipeSerializerForPost):
 
     def get_ingredients(self, obj):
         my_list = list()
-        all_ingredients = obj.ingredients.through.objects.filter(
-            recipe__name=obj.name)
-        for ingredient_to_recipe in all_ingredients:
-            my_dict = dict()
-            my_dict['id'] = ingredient_to_recipe.ingredient.id
-            my_dict['amount'] = ingredient_to_recipe.amount
-            my_dict['measurement_unit'] = (ingredient_to_recipe
-                                           .ingredient
-                                           .measurement_unit
-                                           .title)
-            my_dict['name'] = ingredient_to_recipe.ingredient.name
-
-            my_list.append(my_dict)
-        return my_list
+        return obj.ingredients.through.objects.filter(
+            recipe__name=obj.name).values('id', 'amount',
+                                          'ingredient__measurement_unit',
+                                          'ingredient__name')
+        # all_ingredients = obj.ingredients.through.objects.filter(
+        #     recipe__name=obj.name)
+        # for ingredient_to_recipe in all_ingredients:
+        #     my_dict = dict()
+        #     # ingredients = ingredient_to_recipe.values('id', 'amount',
+        #     #                                           'measurement_unit',
+        #     #                                           'name')
+        #     my_dict['id'] = ingredient_to_recipe.ingredient.id
+        #     my_dict['amount'] = ingredient_to_recipe.amount
+        #     my_dict['measurement_unit'] = (ingredient_to_recipe
+        #                                .ingredient
+        #                                .measurement_unit
+        #                                .title)
+        #     my_dict['name'] = ingredient_to_recipe.ingredient.name
+        #
+        #     my_list.append(my_dict)
+        # return my_dict
 
     class Meta:
         model = Recipe
         fields = ['id', 'tags', 'author', 'ingredients',
                   'name', 'image', 'text',
-                  'cooking_time', 'is_favorited', 'is_in_shopping_cart',
-                  ]
+                  'cooking_time', 'is_favorited', 'is_in_shopping_cart', ]
 
 
 class RecipeFavoriteSerializer(ModelSerializer):

@@ -11,8 +11,8 @@ class RecipeQuerySet(models.QuerySet):
             is_favorited=
             (
                 Exists(UserFavoriteRecipe.objects.filter(user=user,
-                                                         recipe=OuterRef(
-                                                             "pk")))
+                                                         recipe=OuterRef("pk")))
+
             )
         )
 
@@ -21,8 +21,7 @@ class RecipeQuerySet(models.QuerySet):
             is_in_shopping_cart=
             (
                 Exists(ShoppingList.objects.filter(user=user,
-                                                   recipe=OuterRef(
-                                                       "pk")))
+                                                   recipe=OuterRef("pk")))
             )
         )
 
