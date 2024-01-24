@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ('recipe', '0001_initial'),
     ]
@@ -14,16 +13,22 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='recipe',
             name='ingredients',
-            field=models.ManyToManyField(related_name='ingredients1', through='recipe.RecipeIngredientRelation', to='recipe.ingredient'),
+            field=models.ManyToManyField(related_name='ingredients1',
+                                         through='recipe.RecipeIngredientRelation',
+                                         to='recipe.ingredient'),
         ),
         migrations.AlterField(
             model_name='recipeingredientrelation',
             name='ingredient',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='recipe.ingredient'),
+            field=models.ForeignKey(null=True,
+                                    on_delete=django.db.models.deletion.CASCADE,
+                                    to='recipe.ingredient'),
         ),
         migrations.AlterField(
             model_name='recipeingredientrelation',
             name='recipe',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.CASCADE, to='recipe.recipe'),
+            field=models.ForeignKey(null=True,
+                                    on_delete=django.db.models.deletion.CASCADE,
+                                    to='recipe.recipe'),
         ),
     ]

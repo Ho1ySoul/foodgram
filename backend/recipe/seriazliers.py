@@ -1,11 +1,11 @@
 import base64
 
 from django.core.files.base import ContentFile
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
+
 from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
                            RecipeIngredientRelation)
-from rest_framework import serializers
-
 from users.serializers import UserSerializer, UserSerializerForSubcribe
 
 
@@ -34,11 +34,21 @@ class IngredientSerializer(ModelSerializer):
 
 
 class IngredientSerializerForRelation(ModelSerializer):
-    amount = serializers.IntegerField()
+    id = serializers.PrimaryKeyRelatedField(source='ingredient',
+                                            read_only=True)
+    name = serializers.SlugRelatedField(source='ingredient',
+                                        slug_field='name',
+                                        read_only=True)
+    measurement_unit = serializers.SlugRelatedField(
+        source='ingredient',
+        slug_field='measurement_unit',
+        read_only=True
+    )
+    amount = serializers.IntegerField(read_only=True)
 
     class Meta:
-        model = Ingredient
-        fields = ['id', 'amount']
+        model = RecipeIngredientRelation
+        fields = ['id', 'amount', 'name', 'measurement_unit']
 
 
 class Base64ImageField(serializers.ImageField):
@@ -106,32 +116,9 @@ class RecipeSerializer(RecipeSerializerForPost):
     is_favorited = serializers.BooleanField(default=False)
     is_in_shopping_cart = serializers.BooleanField(default=False)
     tags = TagSerializer(many=True)
-    ingredients = serializers.SerializerMethodField(
-        method_name="get_ingredients")
+    ingredients = IngredientSerializerForRelation(read_only=True,
+                                                  source='ingredient_set')
     author = UserSerializerForSubcribe(read_only=True)
-    def get_ingredients(self, obj):
-        my_list = list()
-        return obj.ingredients.through.objects.filter(
-            recipe__name=obj.name).values('id', 'amount',
-                                          'ingredient__measurement_unit',
-                                          'ingredient__name')
-        # all_ingredients = obj.ingredients.through.objects.filter(
-        #     recipe__name=obj.name)
-        # for ingredient_to_recipe in all_ingredients:
-        #     my_dict = dict()
-        #     # ingredients = ingredient_to_recipe.values('id', 'amount',
-        #     #                                           'measurement_unit',
-        #     #                                           'name')
-        #     my_dict['id'] = ingredient_to_recipe.ingredient.id
-        #     my_dict['amount'] = ingredient_to_recipe.amount
-        #     my_dict['measurement_unit'] = (ingredient_to_recipe
-        #                                .ingredient
-        #                                .measurement_unit
-        #                                .title)
-        #     my_dict['name'] = ingredient_to_recipe.ingredient.name
-        #
-        #     my_list.append(my_dict)
-        # return my_dict
 
     class Meta:
         model = Recipe

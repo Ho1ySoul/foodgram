@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
-from django.db.models import Exists, OuterRef, Count
+from django.db.models import Exists, OuterRef
 
 
 class UserCustomManager(UserManager):

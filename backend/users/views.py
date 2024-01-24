@@ -1,16 +1,15 @@
-import http.client
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from users.models import UserSubscribe, User
-from users.serializers import UserSerializer, UserFavoriteSerializer, \
-    UserSerializerForSubcribe
-from djoser.views import UserViewSet
+from users.models import User, UserSubscribe
+from users.serializers import (UserFavoriteSerializer, UserSerializer,
+                               UserSerializerForSubcribe)
 
 
 class SmallPagesPagination(PageNumberPagination):
@@ -29,7 +28,7 @@ class UserFavoriteViewSet(APIView):
         try:
             UserAuthor = UserSubscribe.objects.get(user=request.user,
                                                    author=author)
-        except:
+        except ObjectDoesNotExist:
             UserAuthor = UserSubscribe.objects.create(user=request.user,
                                                       author=author)
         else:

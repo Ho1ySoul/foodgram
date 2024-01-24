@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth import get_user_model
+from django.db import models
 from django.db.models import Exists, OuterRef
 
 User = get_user_model()
@@ -8,21 +8,17 @@ User = get_user_model()
 class RecipeQuerySet(models.QuerySet):
     def with_is_favorited(self, user):
         return self.annotate(
-            is_favorited=
-            (
+            is_favorited=(
                 Exists(UserFavoriteRecipe.objects.filter(user=user,
-                                                         recipe=OuterRef("pk")))
-
-            )
+                                                         recipe=OuterRef(
+                                                             "pk"))))
         )
 
     def with_is_in_shopping_cart(self, user):
         return self.annotate(
-            is_in_shopping_cart=
-            (
+            is_in_shopping_cart=(
                 Exists(ShoppingList.objects.filter(user=user,
-                                                   recipe=OuterRef("pk")))
-            )
+                                                   recipe=OuterRef("pk"))))
         )
 
 

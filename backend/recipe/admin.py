@@ -1,7 +1,8 @@
 from django.contrib import admin
 
-from .models import Recipe, Ingredient, MeasurementUnit, \
-    RecipeIngredientRelation, ShoppingList, UserFavoriteRecipe, Tag
+from .models import (Recipe, Ingredient, MeasurementUnit,
+                     RecipeIngredientRelation, ShoppingList,
+                     UserFavoriteRecipe, Tag)
 
 
 @admin.register(MeasurementUnit)

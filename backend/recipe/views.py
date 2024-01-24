@@ -1,21 +1,20 @@
+from django.db.models import F
 from django.db.models import Sum
 from django.http import HttpResponse
-
-from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from django.db.models import F
 
 from foodgram.filters import CategoriesFilter
+from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
+                           UserFavoriteRecipe, RecipeIngredientRelation,
+                           ShoppingList)
 from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
                                 IngredientSerializer, RecipeSerializer,
                                 RecipeFavoriteSerializer,
                                 RecipeSerializerForPost)
-from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
-                           UserFavoriteRecipe, RecipeIngredientRelation,
-                           ShoppingList)
 
 
 class TagViewSet(ModelViewSet):
@@ -39,7 +38,7 @@ class IngredientViewSet(ModelViewSet):
 
 
 class RecipesViewSet(ModelViewSet):
-    queryset = Recipe.objects.all()
+    # queryset = Recipe.objects.all()
     filterset_class = CategoriesFilter
 
     def get_serializer_class(self):
@@ -51,7 +50,7 @@ class RecipesViewSet(ModelViewSet):
     def get_queryset(self):
         if self.request.user.is_authenticated:
             return (
-                self.queryset
+                Recipe.objects
                 .prefetch_related('tags', 'ingredients')
                 .select_related('author')
                 .with_is_favorited(self.request.user)
@@ -129,9 +128,11 @@ class RecipesShoppingCartDownloadViewSet(APIView):
         print(ingredients)
         ingredients_line = ''
         for ingredient in ingredients:
-            ingredients_line += (f'{ingredient['ingredient_name']} :'
-                                 f'  {ingredient['amount_ingredient']} '
-                                 f'{ingredient['ingredient_measurement_unit']}\n')
+            ingredients_line += (
+                f'{ingredient['ingredient_name']} :'
+                f'  {ingredient['amount_ingredient']} '
+                f'{ingredient['ingredient_measurement_unit']}\n'
+            )
 
         return HttpResponse(
             ingredients_line,
