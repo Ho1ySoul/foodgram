@@ -69,7 +69,7 @@ class UserFavoriteSerializer(ModelSerializer):
     is_subscribed = serializers.BooleanField(required=False)
     recipes_count = serializers.SerializerMethodField(
         method_name="get_recipe_count")
-    recipes = RecipeForSerializer(source='recipes_in_favorite', many=True)
+    recipes = RecipeForSerializer(source='author_recipes', many=True)
 
     def get_recipe_count(self, obj):
         return Recipe.objects.filter(author=obj).count()
