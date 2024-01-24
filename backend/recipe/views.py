@@ -51,7 +51,10 @@ class RecipesViewSet(ModelViewSet):
         if self.request.user.is_authenticated:
             return (
                 Recipe.objects
-                .prefetch_related('tags', 'ingredients')
+                .prefetch_related(
+                    'tags',
+                    'ingredient_set__ingredient__measurement_unit'
+                )
                 .select_related('author')
                 .with_is_favorited(self.request.user)
                 .with_is_in_shopping_cart(self.request.user)
@@ -125,7 +128,6 @@ class RecipesShoppingCartDownloadViewSet(APIView):
             )
         )
 
-        print(ingredients)
         ingredients_line = ''
         for ingredient in ingredients:
             ingredients_line += (

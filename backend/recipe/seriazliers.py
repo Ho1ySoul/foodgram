@@ -40,8 +40,8 @@ class IngredientSerializerForRelation(ModelSerializer):
                                         slug_field='name',
                                         read_only=True)
     measurement_unit = serializers.SlugRelatedField(
-        source='ingredient',
-        slug_field='measurement_unit',
+        source='ingredient.measurement_unit',
+        slug_field='title',
         read_only=True
     )
     amount = serializers.IntegerField(read_only=True)
@@ -117,7 +117,8 @@ class RecipeSerializer(RecipeSerializerForPost):
     is_in_shopping_cart = serializers.BooleanField(default=False)
     tags = TagSerializer(many=True)
     ingredients = IngredientSerializerForRelation(read_only=True,
-                                                  source='ingredient_set')
+                                                  source='ingredient_set',
+                                                  many=True)
     author = UserSerializerForSubcribe(read_only=True)
 
     class Meta:
