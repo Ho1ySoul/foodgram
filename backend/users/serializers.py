@@ -27,15 +27,6 @@ class RecipeForSerializer(ModelSerializer):
                   'cooking_time')
 
 
-# class RecipeSerializerUser(ModelSerializer):
-#     recipe = RecipeForSerializer(source='recipes',
-#                                  many=True, read_only=True)
-#
-#     class Meta:
-#         model = User
-#         fields = ['recipe']
-
-
 class UserSerializerForSubcribe(ModelSerializer):
     is_subscribed = serializers.BooleanField(read_only=True)
 
@@ -51,16 +42,10 @@ class UserSerializerForSubcribe(ModelSerializer):
         )
 
 
-# class RecipeSerializerForUserFavorite(ModelSerializer):
-#     class Meta:
-#         fields = ['id', 'name', 'image', 'cooking_time']
-
-
 class UserSerializer(ModelSerializer):
     is_subscribed = serializers.BooleanField(read_only=True)
     recipes_count = serializers.SerializerMethodField(
         method_name="get_recipe_count")
-    # recipes_count = serializers.IntegerField(read_only=True)
     recipes = RecipeForSerializer(source='recipes1', many=True)
 
     def get_recipe_count(self, obj):

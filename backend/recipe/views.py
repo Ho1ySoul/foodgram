@@ -53,8 +53,7 @@ class RecipesViewSet(ModelViewSet):
                 Recipe.objects
                 .prefetch_related(
                     'tags',
-                    'ingredient_set__ingredient__measurement_unit'
-                )
+                    'ingredient_set__ingredient__measurement_unit')
                 .select_related('author')
                 .with_is_favorited(self.request.user)
                 .with_is_in_shopping_cart(self.request.user)
@@ -131,8 +130,8 @@ class RecipesShoppingCartDownloadViewSet(APIView):
         ingredients_line = ''
         for ingredient in ingredients:
             ingredients_line += (
-                f'{ingredient['ingredient_name']} :'
-                f'  {ingredient['amount_ingredient']} '
+                f'{ingredient['ingredient_name']} : '
+                f' {ingredient['amount_ingredient']} '
                 f'{ingredient['ingredient_measurement_unit']}\n'
             )
 

@@ -51,7 +51,6 @@ class UserProfileView(ListAPIView):
     def get_queryset(self):
         return (User.objects
                 .with_is_subscribe(self.request.user)
-                # .with_is_recipe_count(self.request.user)
                 .filter(is_subscribed=True))
 
 
@@ -61,4 +60,3 @@ class UserProfileIsSubcribedView(UserViewSet):
     def get_queryset(self):
         return (User.objects
                 .with_is_subscribe(self.request.user))
-        # .with_is_recipe_count(self.request.user))
