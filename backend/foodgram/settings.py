@@ -188,39 +188,39 @@ DJOSER = {
     # 'HIDE_USERS': False
 }
 DEFAULT_CHARSET = 'utf-8'
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    # 'filters': {
-    #     'require_debug_true': {
-    #         '()': 'django.utils.log.RequireDebugTrue',
-    #     },
-
-    "formatters": {
-        "main_format": {
-            "format": "{asctime} {levelname} {module} {filename} {message} ",
-            "style": "{",
-        },
-    },
-
-    'handlers': {
-        "console": {
-            # "level": "INFO",
-            "class": "logging.StreamHandler",
-            "formatter": "main_format",
-            # 'filters': ['require_debug_true'],
-        },
-    },
-
-    "loggers": {
-        "main": {
-            "handlers": ["console"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        },
-    }
-}
+# LOGGING = {
+#     "version": 1,
+#     "disable_existing_loggers": False,
+#     # 'filters': {
+#     #     'require_debug_true': {
+#     #         '()': 'django.utils.log.RequireDebugTrue',
+#     #     },
+#
+#     "formatters": {
+#         "main_format": {
+#             "format": "{asctime} {levelname} {module} {filename} {message} ",
+#             "style": "{",
+#         },
+#     },
+#
+#     'handlers': {
+#         "console": {
+#             # "level": "INFO",
+#             "class": "logging.StreamHandler",
+#             "formatter": "main_format",
+#             # 'filters': ['require_debug_true'],
+#         },
+#     },
+#
+#     "loggers": {
+#         "main": {
+#             "handlers": ["console"],
+#             "level": "DEBUG",
+#             "propagate": True,
+#         },
+#         'django.db.backends': {
+#             'level': 'DEBUG',
+#             'handlers': ['console'],
+#         },
+#     }
+# }
