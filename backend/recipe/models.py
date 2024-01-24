@@ -36,7 +36,7 @@ class Ingredient(models.Model):
     name = models.CharField(max_length=255)
     measurement_unit = models.ForeignKey(MeasurementUnit,
                                          on_delete=models.CASCADE,
-                                         related_name='Ingredient')
+                                         related_name='ingredient')
 
     def __str__(self):
         return f'{self.name}: {self.measurement_unit}'
@@ -65,7 +65,7 @@ class Recipe(models.Model):
     ingredients = models.ManyToManyField(Ingredient,
                                          through="RecipeIngredientRelation",
                                          related_name='ingredients_in_recipe')
-    tags = models.ManyToManyField(Tag, related_name='tags')
+    tags = models.ManyToManyField(Tag, related_name='tags_in_recipe')
     cooking_time = models.PositiveIntegerField()
 
     objects = RecipeQuerySet.as_manager()
