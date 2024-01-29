@@ -130,9 +130,9 @@ class RecipesShoppingCartDownloadViewSet(APIView):
         ingredients_line = ''
         for ingredient in ingredients:
             ingredients_line += (
-                f'{ingredient['ingredient_name']} : '
-                f' {ingredient['amount_ingredient']} '
-                f'{ingredient['ingredient_measurement_unit']}\n'
+                f'{ingredient["ingredient_name"]} : '
+                f' {ingredient["amount_ingredient"]} '
+                f'{ingredient["ingredient_measurement_unit"]}\n'
             )
 
         return HttpResponse(
