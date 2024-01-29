@@ -85,7 +85,7 @@ class RecipesFavoriteViewSet(APIView):
         recipe = Recipe.objects.get(id=id)
         UserFavoriteRecipe.objects.filter(user=request.user,
                                           recipe=recipe).delete()
-        return Response({"message": "Рецепт успешно удалён"})
+        return Response({'message': 'Рецепт успешно удалён'})
 
 
 class RecipesShoppingCartViewSet(APIView):
@@ -105,7 +105,7 @@ class RecipesShoppingCartViewSet(APIView):
         recipe = Recipe.objects.get(id=id)
         ShoppingList.objects.filter(user=request.user,
                                     recipe=recipe).delete()
-        return Response({"message": "Рецепт успешно удалён"})
+        return Response({'message': 'Рецепт успешно удалён'})
 
 
 class RecipesShoppingCartDownloadViewSet(APIView):

@@ -11,7 +11,7 @@ class RecipeQuerySet(models.QuerySet):
             is_favorited=(
                 Exists(UserFavoriteRecipe.objects.filter(
                     user=user,
-                    recipe=OuterRef("pk"))
+                    recipe=OuterRef('pk'))
                 )
 
             )
@@ -21,7 +21,7 @@ class RecipeQuerySet(models.QuerySet):
         return self.annotate(
             is_in_shopping_cart=(
                 Exists(ShoppingList.objects.filter(user=user,
-                                                   recipe=OuterRef("pk"))))
+                                                   recipe=OuterRef('pk'))))
         )
 
 
@@ -63,7 +63,7 @@ class Recipe(models.Model):
                               verbose_name='Изображение')
     text = models.TextField()
     ingredients = models.ManyToManyField(Ingredient,
-                                         through="RecipeIngredientRelation",
+                                         through='RecipeIngredientRelation',
                                          related_name='ingredients_in_recipe')
     tags = models.ManyToManyField(Tag, related_name='tags_in_recipe')
     cooking_time = models.PositiveIntegerField()
@@ -81,7 +81,7 @@ class RecipeIngredientRelation(models.Model):
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE,
                                    null=True,
                                    related_name='recipe_set')
-    amount = models.PositiveIntegerField("Кол-во ингридиентов")
+    amount = models.PositiveIntegerField('Кол-во ингридиентов')
 
 
 class ShoppingList(models.Model):
