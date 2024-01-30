@@ -2,7 +2,7 @@ from django.db.models import F
 from django.db.models import Sum
 from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -27,13 +27,13 @@ class TagViewSet(ModelViewSet):
 class MeasurementUnitViewSet(ModelViewSet):
     queryset = MeasurementUnit.objects.all()
     serializer_class = MeasurementUnitSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUser]
 
 
 class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUser]
     pagination_class = None
 
 
