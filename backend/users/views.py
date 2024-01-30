@@ -18,7 +18,7 @@ class SmallPagesPagination(PageNumberPagination):
 
 
 class UserFavoriteViewSet(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self):
         return User.objects.with_is_subscribe(self.request.user)
 
@@ -49,7 +49,7 @@ class UserFavoriteViewSet(APIView):
 
 class UserProfileView(ListAPIView):
     serializer_class = UserFavoriteSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self):
         return (User.objects
                 .with_is_subscribe(self.request.user)
@@ -58,7 +58,6 @@ class UserProfileView(ListAPIView):
 
 class UserProfileIsSubcribedView(UserViewSet):
     serializer_class = UserSerializerForSubcribe
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get_queryset(self):
-        return (User.objects
-                .with_is_subscribe(self.request.user))
+        return (User.objects.with_is_subscribe(self.request.user))

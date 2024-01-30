@@ -2,7 +2,8 @@ from django.db.models import F
 from django.db.models import Sum
 from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, \
+    IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -11,6 +12,7 @@ from foodgram.filters import CategoriesFilter
 from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
                            UserFavoriteRecipe, RecipeIngredientRelation,
                            ShoppingList)
+from recipe.permissions import IsStaffOrReadOnly
 from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
                                 IngredientSerializer, RecipeSerializer,
                                 RecipeFavoriteSerializer,
@@ -20,20 +22,20 @@ from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsStaffOrReadOnly]
     pagination_class = None
 
 
 class MeasurementUnitViewSet(ModelViewSet):
     queryset = MeasurementUnit.objects.all()
     serializer_class = MeasurementUnitSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsStaffOrReadOnly]
 
 
 class IngredientViewSet(ModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsStaffOrReadOnly]
     pagination_class = None
 
 
@@ -64,7 +66,7 @@ class RecipesViewSet(ModelViewSet):
 
 
 class RecipesFavoriteViewSet(APIView):
-    permission_classes = IsAuthenticatedOrReadOnly
+    permission_classes = [IsAuthenticated]
 
     def post(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
@@ -91,8 +93,7 @@ class RecipesFavoriteViewSet(APIView):
 
 
 class RecipesShoppingCartViewSet(APIView):
-    permission_classes = IsAuthenticatedOrReadOnly
-
+    permission_classes = [IsAuthenticated]
     def post(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
         HaveShoppingList = ShoppingList.objects.filter(user=request.user,
@@ -113,8 +114,7 @@ class RecipesShoppingCartViewSet(APIView):
 
 
 class RecipesShoppingCartDownloadViewSet(APIView):
-    permission_classes = IsAuthenticatedOrReadOnly
-    
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         shop_recipes = ShoppingList.objects.filter(
             user=self.request.user).values('recipe')
