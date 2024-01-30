@@ -2,47 +2,48 @@ from django.db.models import F
 from django.db.models import Sum
 from django.http import HttpResponse
 from rest_framework import status
+from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, \
     IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet
 
 from foodgram.filters import CategoriesFilter
 from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
                            UserFavoriteRecipe, RecipeIngredientRelation,
                            ShoppingList)
-from recipe.permissions import IsStaffOrReadOnly
+from recipe.permissions import IsOwnerOrReadOnly
 from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
                                 IngredientSerializer, RecipeSerializer,
                                 RecipeFavoriteSerializer,
                                 RecipeSerializerForPost)
 
 
-class TagViewSet(ModelViewSet):
+class TagViewSet(GenericViewSet, ListModelMixin):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsStaffOrReadOnly]
+    # permission_classes = [IsStaffOrReadOnly]
     pagination_class = None
 
 
-class MeasurementUnitViewSet(ModelViewSet):
+class MeasurementUnitViewSet(GenericViewSet, ListModelMixin):
     queryset = MeasurementUnit.objects.all()
     serializer_class = MeasurementUnitSerializer
-    permission_classes = [IsStaffOrReadOnly]
+    # permission_classes = [IsStaffOrReadOnly]
 
 
-class IngredientViewSet(ModelViewSet):
+class IngredientViewSet(GenericViewSet, ListModelMixin):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    permission_classes = [IsStaffOrReadOnly]
+    # permission_classes = [IsStaffOrReadOnly]
     pagination_class = None
 
 
 class RecipesViewSet(ModelViewSet):
     # queryset = Recipe.objects.all()
     filterset_class = CategoriesFilter
-
+    serializer_class = [IsOwnerOrReadOnly]
     def get_serializer_class(self):
         if self.request.method == 'POST' or self.request.method == 'PATCH':
             return RecipeSerializerForPost
