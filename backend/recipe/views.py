@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, \
     IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet, GenericViewSet
+from rest_framework.viewsets import ModelViewSet, GenericViewSet, \
+    ReadOnlyModelViewSet
 
 from foodgram.filters import CategoriesFilter
 from recipe.models import (Tag, MeasurementUnit, Ingredient, Recipe,
@@ -20,20 +21,20 @@ from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
                                 RecipeSerializerForPost)
 
 
-class TagViewSet(GenericViewSet, ListModelMixin):
+class TagViewSet(ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     # permission_classes = [IsStaffOrReadOnly]
     pagination_class = None
 
 
-class MeasurementUnitViewSet(GenericViewSet, ListModelMixin):
+class MeasurementUnitViewSet(ReadOnlyModelViewSet):
     queryset = MeasurementUnit.objects.all()
     serializer_class = MeasurementUnitSerializer
     # permission_classes = [IsStaffOrReadOnly]
 
 
-class IngredientViewSet(GenericViewSet, ListModelMixin):
+class IngredientViewSet(ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     # permission_classes = [IsStaffOrReadOnly]
