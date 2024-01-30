@@ -4,7 +4,8 @@ from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, \
+    IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,7 +19,7 @@ class SmallPagesPagination(PageNumberPagination):
 
 
 class UserFavoriteViewSet(APIView):
-
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return User.objects.with_is_subscribe(self.request.user)
 
@@ -49,7 +50,7 @@ class UserFavoriteViewSet(APIView):
 
 class UserProfileView(ListAPIView):
     serializer_class = UserFavoriteSerializer
-
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return (User.objects
                 .with_is_subscribe(self.request.user)
@@ -58,6 +59,6 @@ class UserProfileView(ListAPIView):
 
 class UserProfileIsSubcribedView(UserViewSet):
     serializer_class = UserSerializerForSubcribe
-
+    permission_classes = [IsAuthenticated]
     def get_queryset(self):
         return (User.objects.with_is_subscribe(self.request.user))
