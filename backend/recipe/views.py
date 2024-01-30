@@ -20,7 +20,7 @@ from recipe.seriazliers import (TagSerializer, MeasurementUnitSerializer,
 class TagViewSet(ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAdminUser]
     pagination_class = None
 
 
@@ -64,6 +64,8 @@ class RecipesViewSet(ModelViewSet):
 
 
 class RecipesFavoriteViewSet(APIView):
+    permission_classes = IsAuthenticatedOrReadOnly
+
     def post(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
 
@@ -89,6 +91,8 @@ class RecipesFavoriteViewSet(APIView):
 
 
 class RecipesShoppingCartViewSet(APIView):
+    permission_classes = IsAuthenticatedOrReadOnly
+
     def post(self, request, id):
         recipe = Recipe.objects.filter(id=id).first()
         HaveShoppingList = ShoppingList.objects.filter(user=request.user,
@@ -109,7 +113,8 @@ class RecipesShoppingCartViewSet(APIView):
 
 
 class RecipesShoppingCartDownloadViewSet(APIView):
-
+    permission_classes = IsAuthenticatedOrReadOnly
+    
     def get(self, request):
         shop_recipes = ShoppingList.objects.filter(
             user=self.request.user).values('recipe')
