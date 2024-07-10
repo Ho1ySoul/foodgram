@@ -1,1 +1,1 @@
-Application backend development
+Backend для дипломного проекта от Яндекс практикум.
